@@ -3,7 +3,7 @@
 all: data trees
 
 clean:
-	rm -rf data
+	rm -f data/*.pkl data/*.fna data/*.fna2 data/*.aln data/*.aln2 data/*.phy
 
 download: list $(patsubst %, data/%.fna.gz, $(shell python scripts/metagenome_list.py data/metagenome_list.pkl))
 
@@ -23,9 +23,11 @@ data/%.fna.gz: data/metagenome_list.pkl scripts/download_metagenomes.py
 %.fna: %.fna.gz
 	gunzip $<
 
-%.aln: %.fna
-	#muscle -in $< -out $@
-	kalign $< $@ -f fasta
+%.fna2: %.fna scripts/subsample_sequences.py
+	python scripts/subsample_sequences.py $< 500 > $@
+
+%.aln: %.fna2
+	muscle -in $< -out $@
 
 %.aln2: %.aln scripts/guid_labels.py
 	cat $< | python scripts/guid_labels.py > $@
