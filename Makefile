@@ -5,7 +5,7 @@ all: data metagenomes
 clean:
 	rm -rf data
 
-metagenomes: data/metagenome_list.pkl $(patsubst %, %.fna.gz, $(shell python scripts/metagenome_list.py data/metagenome_list.pkl))
+metagenomes: data/metagenome_list.pkl $(patsubst %, data/%.fna.gz, $(shell python scripts/metagenome_list.py data/metagenome_list.pkl))
 
 list: data data/metagenome_list.pkl
 
@@ -15,5 +15,5 @@ data:
 data/metagenome_list.pkl: scripts/get_metagenome_list.py
 	python $< $@
 
-%.fna.gz: data/metagenome_list.pkl scripts/download_metagenomes.py
-	python scripts/download_metagenomes.py $< data/
+data/%.fna.gz: data/metagenome_list.pkl scripts/download_metagenomes.py
+	python scripts/download_metagenomes.py $< data/ $(shell python -c "print '$@'[len('data/'):-len('.fna.gz')]")

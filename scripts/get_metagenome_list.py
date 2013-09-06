@@ -33,4 +33,4 @@ while result:
     else: result = None
 
 with open(output_path, 'wb') as output_file:
-    pkl.dump(metagenomes, output_file, -1)
+    pkl.dump({g['id']: g for g in metagenomes}, output_file, -1)

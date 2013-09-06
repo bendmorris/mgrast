@@ -11,5 +11,5 @@ try:
     with open(input_path) as input_file:
         data = pkl.load(input_file)
 
-    print ' '.join([x['id'] for x in data])
+    print ' '.join(data)
 except: print
