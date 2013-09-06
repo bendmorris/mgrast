@@ -11,5 +11,7 @@ try:
 except: data = sys.stdin.read()
 
 sequences = data.split('>')[1:]
+if len(sequences) > n:
+    sequences = random.sample(sequences, n)
 
-sys.stdout.write('>' + '>'.join(random.sample(sequences, n)))
+sys.stdout.write('>' + '>'.join(sequences))
