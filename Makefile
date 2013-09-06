@@ -24,7 +24,8 @@ data/%.fna.gz: data/metagenome_list.pkl scripts/download_metagenomes.py
 	gunzip $<
 
 %.aln: %.fna
-	muscle -in $< -out $@
+	#muscle -in $< -out $@
+	kalign $< $@ -f fasta
 
 %.aln2: %.aln scripts/guid_labels.py
 	cat $< | python scripts/guid_labels.py > $@
