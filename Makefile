@@ -4,6 +4,7 @@ all: data trees
 
 clean:
 	rm -f data/*.pkl data/*.fna data/*.fna2 data/*.aln data/*.aln2 data/*.phy
+	rm -f RAxML*
 
 download: list $(patsubst %, data/%.fna.gz, $(shell python scripts/metagenome_list.py data/metagenome_list.pkl))
 
@@ -29,13 +30,12 @@ data/%.fna.gz: data/metagenome_list.pkl scripts/download_metagenomes.py
 %.aln: %.fna2
 	muscle -in $< -out $@
 
-%.aln2: %.aln scripts/guid_labels.py
-	cat $< | python scripts/guid_labels.py > $@
-
-%.phy: %.aln2
-	python -c "import Bio.AlignIO as aio; aio.convert('$<','fasta','$@','phylip')"
+%.phy: %.aln scripts/guid_labels.py
+	cat $< | python scripts/guid_labels.py | \
+	python -c "import Bio.AlignIO as aio; import sys; aio.convert(sys.stdin,'fasta','$@','phylip')"
 
 %.new: %.phy
+	rm -f RAxML*
 	raxmlHPC -m GTRCAT -n $(shell python -c "print '$@'.split('/')[-1][:-len('.new')]") -p 10000 -s $<
 	mv RAxML_result.$(shell python -c "print '$@'.split('/')[-1][:-len('.new')]") $@
-	rm RAxML*
+	rm -f RAxML*
