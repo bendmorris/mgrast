@@ -1,4 +1,5 @@
 .PHONY: all clean
+.INTERMEDIATE: %.fna.gz %.fna %.aln %.phy
 
 all: data trees
 
